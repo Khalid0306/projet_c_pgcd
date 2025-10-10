@@ -6,3 +6,5 @@
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
+
+#define BASE 2
