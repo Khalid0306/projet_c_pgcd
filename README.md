@@ -4,5 +4,7 @@ Le projet a donc pour objectif de réaliser une "bibliothèque" de fonctions per
 ## Répartition des tâches 
 
 Khalid :
+
 Yannis :
+
 Arwin :
