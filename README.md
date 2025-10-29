@@ -10,3 +10,10 @@ Khalid :
 Yannis :
 
 Arwin : 
+
+Opérations de base :
+1. Une fonction Addition (somme) (*)
+2. Une fonction Soustraction (différence) (*)
+3. Des fonctions usuelles de comparaison (*) :
+   — Egal : Egal(A,B) renvoit true si A == B sinon on renvoit false
+   — Inferieur : Inferieur(A,B) renvoit true si A < B sinon on renvoit false

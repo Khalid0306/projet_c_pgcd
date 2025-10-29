@@ -8,3 +8,10 @@
 #include <stdlib.h>
 
 #define BASE 2
+
+BigBinary createBigBinary(int size) {
+    BigBinary binary;
+    binary.Signe = 0;
+    binary.Taille = size;
+    binary.BigBinary = malloc(size * sizeof(int));
+}
