@@ -19,4 +19,12 @@ typedef struct {
     int Signe;
 } BigBinary;
 
+BigBinary createBigBinary(int size);
+BigBinary initBigBinary(int taille, int signe);
+BigBinary createBigBinaryFromString(char *chaine);
+void displayBigBinary(BigBinary nb);
+void freeBigBinary(BigBinary *nb);
+BigBinary sumBigBinary(BigBinary a, BigBinary b);
+void ajusterTaille(BigBinary *nb);
+
 #endif //PROJET_C_PGCD_GRAND_ENTIER_H
