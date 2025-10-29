@@ -8,3 +8,5 @@
 #include <stdint.h>
 
 #include"grand_entier.h"
+
+#define BASE 2
