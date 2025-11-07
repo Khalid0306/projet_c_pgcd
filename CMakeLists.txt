@@ -8,4 +8,5 @@ include_directories(src)
 add_executable(projet_c_pgcd
         src/grand_entier.c
         src/grand_entier.h
-        main.c)
+        main.c
+        src/test.c)
