@@ -105,7 +105,7 @@ BigBinary sumBigBinary(BigBinary a, BigBinary b) {
     // Déterminer la taille maximale
     int maxLen = (a.Taille > b.Taille) ? a.Taille : b.Taille;
 
-    // Allouer pour maxLen + 1 (pour la retenue finale possible)
+    // Allouer pour maxLen + 1 (pour la retenue finale)
     resultat.Tdigits = malloc((maxLen + 1) * sizeof(int));
     resultat.Taille = maxLen + 1;
     resultat.Signe = 1;  // Résultat positif (A, B ≥ 0)
