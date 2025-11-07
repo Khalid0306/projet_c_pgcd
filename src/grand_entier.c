@@ -182,8 +182,10 @@ Boolean comparaisonEgal(BigBinary a, BigBinary b) {
 }
 //faire la fonction de comparaison inferieur, si A<B renvoi true sinon false
 Boolean comparaisonInferieur(BigBinary a, BigBinary b) {
-	if (BigbinaryCompare(&a < &b){
-		return true;
-	else
-		return false;
+    if (&a < &b) {
+        return true;
+    }
+    else if (&b < &a) {
+        return false;
+    }
 }
