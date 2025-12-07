@@ -172,3 +172,20 @@ void ajusterTaille(BigBinary *nb)
         nb->Taille = nouvelleTaille;
     }
 }
+
+//Fonction comparaison renvoi true si A==B Sinon renvoi false
+Boolean comparaisonEgal(BigBinary a, BigBinary b) {
+	if (BigbinaryCompare(&a, &b) == 0)
+		return true;
+	else
+		return false;
+}
+//faire la fonction de comparaison inferieur, si A<B renvoi true sinon false
+Boolean comparaisonInferieur(BigBinary a, BigBinary b) {
+    if (&a < &b) {
+        return true;
+    }
+    else if (&b < &a) {
+        return false;
+    }
+}
