@@ -107,7 +107,6 @@ void freeBigBinary(BigBinary *nb) {
     nb->Signe = 0;
 }
 
-// Fonction d'addition de deux grands entiers
 BigBinary sumBigBinary(BigBinary a, BigBinary b) {
     BigBinary resultat;
 
@@ -121,30 +120,30 @@ BigBinary sumBigBinary(BigBinary a, BigBinary b) {
 
     int retenue = 0;
 
-    // Parcourir de DROITE à GAUCHE (du LSB au MSB)
+    // Parcourir du LSB au MSB
     for (int i = 0; i < maxLen; i++)
     {
         // Index dans A et B (depuis la FIN du tableau)
         int indexA = a.Taille - 1 - i;
         int indexB = b.Taille - 1 - i;
 
-        // Récupérer les bits (0 si hors limites)
+        // Récupérer les bits
         int bitA = (indexA >= 0) ? a.Tdigits[indexA] : 0;
         int bitB = (indexB >= 0) ? b.Tdigits[indexB] : 0;
 
         // Calcul de la somme avec retenue
         int somme = bitA + bitB + retenue;
 
-        // Stocker dans resultat (index depuis la FIN)
+        // Stocker dans resultat
         int indexResultat = resultat.Taille - 1 - i;
         resultat.Tdigits[indexResultat] = somme % BASE;
         retenue = somme / BASE;
     }
 
-    // Stocker la retenue finale en tête (MSB)
+    // Stocker la retenue finale en tête
     resultat.Tdigits[0] = retenue;
 
-    // Ajuster la taille (supprimer le 0 de tête si pas de retenue)
+    // Supprimer le 0 de tête si pas de retenue
     ajusterTaille(&resultat);
 
     return resultat;
@@ -182,7 +181,6 @@ void ajusterTaille(BigBinary *nb)
     }
 }
 
-//Fonction comparaison renvoi true si A==B Sinon renvoi false
 bool comparaisonEgal(BigBinary a, BigBinary b) {
     // Signes différents
     if (a.Signe != b.Signe) return false;
@@ -198,7 +196,6 @@ bool comparaisonEgal(BigBinary a, BigBinary b) {
     return true;
 }
 
-//faire la fonction de comparaison inferieur, si A<B renvoi true sinon false
 bool comparaisonInferieur(BigBinary a, BigBinary b) {
     // Si les signes sont différents
     if (a.Signe < b.Signe) return true;
@@ -218,7 +215,6 @@ bool comparaisonInferieur(BigBinary a, BigBinary b) {
     return false;
 }
 
-// Fonction de soustraction : A - B avec A >= B
 BigBinary subBigBinary(BigBinary a, BigBinary b) {
     BigBinary resultat;
     int emprunt = 0;
@@ -282,7 +278,7 @@ BigBinary subBigBinary(BigBinary a, BigBinary b) {
 }
 
 void divisePar2(BigBinary *nb) {
-    // Cas zéro ou nombre à 1 bit (Dans les deux cas division par zéro)
+    // Cas zéro ou nombre à 1 bit
     if (nb->Signe == 0 || nb->Taille <= 1) {
         nb->Tdigits[0] = 0;
         nb->Taille = 1;
@@ -308,4 +304,122 @@ void divisePar2(BigBinary *nb) {
         nb->Taille = 1;
         nb->Signe = 0;
     }
+}
+
+bool estPair(BigBinary nb) {
+    // Un nombre est pair si son bit de poids faible (LSB) est 0
+    if (nb.Taille == 0 || nb.Signe == 0) {
+        return true;
+    }
+    return (nb.Tdigits[nb.Taille - 1] == 0);
+}
+
+
+void multiplierPar2(BigBinary *nb) {
+    if (nb->Signe == 0) {
+        return;  // 0 * 2 = 0
+    }
+    int *nouveauTableau = malloc((nb->Taille + 1) * sizeof(int));
+
+    // Copie les bits existants
+    for (int i = 0; i < nb->Taille; i++) {
+        nouveauTableau[i] = nb->Tdigits[i];
+    }
+
+    // LSB
+    nouveauTableau[nb->Taille] = 0;
+
+    // Libérer l'ancien tableau et mettre à jour
+    free(nb->Tdigits);
+    nb->Tdigits = nouveauTableau;
+    nb->Taille++;
+}
+
+// Crée une copie d'un BigBinary
+BigBinary copierBigBinary(BigBinary source) {
+    BigBinary copie;
+
+    if (source.Signe == 0 || source.Taille == 0) {
+        return createZero();
+    }
+
+    copie.Tdigits = malloc(source.Taille * sizeof(int));
+    copie.Taille = source.Taille;
+    copie.Signe = source.Signe;
+
+    for (int i = 0; i < source.Taille; i++) {
+        copie.Tdigits[i] = source.Tdigits[i];
+    }
+
+    return copie;
+}
+
+// Algorithme binaire d'Euclide pour le PGCD
+BigBinary pgcdBigBinary(BigBinary a, BigBinary b) {
+    // Si PGCD(a, 0) = a
+    if (b.Signe == 0) {
+        return copierBigBinary(a);
+    }
+
+    // Si PGCD(b, 0) = b
+    if (a.Signe == 0) {
+        return copierBigBinary(b);
+    }
+
+    // Créer des copies
+    BigBinary aCopy = copierBigBinary(a);
+    BigBinary bCopy = copierBigBinary(b);
+
+    // Compteur pour le facteur 2^k
+    int facteur2 = 0;
+
+    // Si a et b sont tous deux pairs, factoriser par 2
+    while (estPair(aCopy) && estPair(bCopy)) {
+        divisePar2(&aCopy);
+        divisePar2(&bCopy);
+        facteur2++;
+    }
+
+    while (aCopy.Signe != 0 && bCopy.Signe != 0) {
+        // Si a est pair et b impair
+        while (estPair(aCopy) && !estPair(bCopy)) {
+            divisePar2(&aCopy);
+        }
+
+        // Si a est impair et b pair
+        while (!estPair(aCopy) && estPair(bCopy)) {
+            divisePar2(&bCopy);
+        }
+
+        // Si a et b sont impairs
+        if (!estPair(aCopy) && !estPair(bCopy)) {
+            // S'assurer que a >= b
+            if (comparaisonInferieur(aCopy, bCopy)) {
+                BigBinary temp = aCopy;
+                aCopy = bCopy;
+                bCopy = temp;
+            }
+
+            // a = a - b
+            BigBinary diff = subBigBinary(aCopy, bCopy);
+            freeBigBinary(&aCopy);
+            aCopy = diff;
+        }
+    }
+
+    BigBinary resultat;
+    if (bCopy.Signe == 0) {
+        resultat = aCopy;
+        freeBigBinary(&bCopy);
+    } else {
+        resultat = bCopy;
+        freeBigBinary(&aCopy);
+    }
+
+    // Multiplier par 2^facteur2
+    for (int i = 0; i < facteur2; i++) {
+        multiplierPar2(&resultat);
+    }
+
+    return resultat;
 }

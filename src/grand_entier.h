@@ -25,11 +25,16 @@ BigBinary initBigBinary(int taille, int signe);
 BigBinary createBigBinaryFromString(char *chaine);
 BigBinary sumBigBinary(BigBinary a, BigBinary b);
 BigBinary subBigBinary(BigBinary a, BigBinary b);
+BigBinary copierBigBinary(BigBinary source);
+BigBinary pgcdBigBinary(BigBinary a, BigBinary b);
 void displayBigBinary(BigBinary nb);
 void freeBigBinary(BigBinary *nb);
 void ajusterTaille(BigBinary *nb);
 void divisePar2(BigBinary *nb);
+void multiplierPar2(BigBinary *nb);
 bool comparaisonEgal(BigBinary a, BigBinary b);
 bool comparaisonInferieur(BigBinary a, BigBinary b);
+bool estPair(BigBinary nb);
+char* bigBinaryToDecimal(const BigBinary nb);
 
 #endif //PROJET_C_PGCD_GRAND_ENTIER_H

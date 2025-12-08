@@ -144,6 +144,28 @@ int main() {
     displayBigBinary(B1);
     printf("Égaux ? %s\n", comparaisonEgal(verif2, B1) ? "True" : "False");
 
+    printTestHeader("TEST 6 : PGCD BINAIRE");
+
+    printSubTestHeader("PGCD avec données du PDF");
+    BigBinary PGCD_A = createBigBinaryFromString("11110001111000100111100100001010110100110010110000100111001100110010111001010111101101110");
+    BigBinary PGCD_B = createBigBinaryFromString("11100110011111011000000111111110110001110000011001111100111011011010101110110111000110111");
+
+    printf("PGCD_A = ");
+    displayBigBinary(PGCD_A);
+    printf("PGCD_B = ");
+    displayBigBinary(PGCD_B);
+
+    BigBinary pgcd_result = pgcdBigBinary(PGCD_A, PGCD_B);
+    printf("\nPGCD(A, B) = ");
+    displayBigBinary(pgcd_result);
+
+    printSubTestHeader("Test simple : PGCD(51, 57) = 3");
+    BigBinary test_a = createBigBinaryFromString("110011");  // 51
+    BigBinary test_b = createBigBinaryFromString("111001");  // 57
+    printf("PGCD(51, 57) = ");
+    BigBinary pgcd_simple = pgcdBigBinary(test_a, test_b);
+    displayBigBinary(pgcd_simple);  // Devrait afficher 11 (3 en binaire)
+
     printTestHeader("LIBÉRATION MÉMOIRE");
 
     freeBigBinary(&A1);
@@ -160,6 +182,12 @@ int main() {
     freeBigBinary(&C2_copy);
     freeBigBinary(&verif1);
     freeBigBinary(&verif2);
+    freeBigBinary(&PGCD_A);
+    freeBigBinary(&PGCD_B);
+    freeBigBinary(&pgcd_result);
+    freeBigBinary(&test_a);
+    freeBigBinary(&test_b);
+    freeBigBinary(&pgcd_simple);
 
     printf("Mémoire libérée\n");
 
