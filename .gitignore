@@ -1,1 +1,12 @@
 .idea/
+build/
+cmake-build-*/
+*.o
+*.exe
+*.out
+projet_c_pgcd
+test
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake

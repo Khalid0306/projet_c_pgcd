@@ -20,11 +20,16 @@ typedef struct {
 } BigBinary;
 
 BigBinary createBigBinary(int size);
+BigBinary createZero();
 BigBinary initBigBinary(int taille, int signe);
 BigBinary createBigBinaryFromString(char *chaine);
+BigBinary sumBigBinary(BigBinary a, BigBinary b);
+BigBinary subBigBinary(BigBinary a, BigBinary b);
 void displayBigBinary(BigBinary nb);
 void freeBigBinary(BigBinary *nb);
-BigBinary sumBigBinary(BigBinary a, BigBinary b);
 void ajusterTaille(BigBinary *nb);
+void divisePar2(BigBinary *nb);
+bool comparaisonEgal(BigBinary a, BigBinary b);
+bool comparaisonInferieur(BigBinary a, BigBinary b);
 
 #endif //PROJET_C_PGCD_GRAND_ENTIER_H
