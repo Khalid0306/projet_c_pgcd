@@ -34,7 +34,7 @@ BigBinary createBigBinaryFromString(char *chaine) {
     int n = strlen(chaine);
     binary.Taille = 0;
 
-    // Comptons uniquementles caractèresvalides (’0’ou ’1’)
+    // Comptons uniquement les caractères valides (’0’ou ’1’)
     for (int i =0; i< n;++i) {
         if (chaine[i] == '0' || chaine[i] == '1'){
             binary.Taille++;
@@ -352,6 +352,52 @@ BigBinary copierBigBinary(BigBinary source) {
     }
 
     return copie;
+}
+
+// Modulo A % N
+BigBinary moduloBigBinary(BigBinary a, BigBinary n) {
+    // Sécurité
+    if (n.Signe == 0) {
+        fprintf(stderr, "Erreur: Modulo par zero interdit.\n");
+        return createZero();
+    }
+    if (a.Signe == 0) return createZero();
+
+    // On travaille avec des valeurs positives pour le calcul
+    BigBinary R = copierBigBinary(a);
+    R.Signe = 1;
+    BigBinary N = copierBigBinary(n);
+    N.Signe = 1;
+
+    // Tant que R >= N
+    while (!comparaisonInferieur(R, N)) {
+        // Optimisation : Trouver le plus grand k tel que (2^k * N) <= R
+        // On approxime k par la différence de taille en bits
+        int diffTaille = R.Taille - N.Taille;
+        if (diffTaille < 0) diffTaille = 0;
+
+        // Créer une version décalée de N : N_shift = N * 2^diffTaille
+        BigBinary N_shift = copierBigBinary(N);
+        for (int i = 0; i < diffTaille; i++) {
+            multiplierPar2(&N_shift);
+        }
+
+        // Si on a décalé trop loin (N_shift > R), on revient un cran en arrière
+        if (comparaisonInferieur(R, N_shift)) {
+            divisePar2(&N_shift);
+        }
+
+        // R = R - N_shift
+        // Note : Votre fonction subBigBinary demande A >= B, ce qui est garanti ici
+        BigBinary temp = subBigBinary(R, N_shift);
+        freeBigBinary(&R);
+        R = temp;
+
+        freeBigBinary(&N_shift);
+    }
+
+    freeBigBinary(&N);
+    return R;
 }
 
 // Algorithme binaire d'Euclide pour le PGCD
