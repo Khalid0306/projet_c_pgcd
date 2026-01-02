@@ -27,6 +27,7 @@ BigBinary sumBigBinary(BigBinary a, BigBinary b);
 BigBinary subBigBinary(BigBinary a, BigBinary b);
 BigBinary copierBigBinary(BigBinary source);
 BigBinary pgcdBigBinary(BigBinary a, BigBinary b);
+BigBinary moduloBigBinary(BigBinary a, BigBinary n);
 void displayBigBinary(BigBinary nb);
 void freeBigBinary(BigBinary *nb);
 void ajusterTaille(BigBinary *nb);
@@ -36,5 +37,6 @@ bool comparaisonEgal(BigBinary a, BigBinary b);
 bool comparaisonInferieur(BigBinary a, BigBinary b);
 bool estPair(BigBinary nb);
 char* bigBinaryToDecimal(const BigBinary nb);
+
 
 #endif //PROJET_C_PGCD_GRAND_ENTIER_H
