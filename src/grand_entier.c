@@ -335,6 +335,40 @@ void multiplierPar2(BigBinary *nb) {
     nb->Taille++;
 }
 
+// Exponentiation Modulaire : (base ^ exp) % mod
+BigBinary exponentiationModulaire(BigBinary base, BigBinary exp, BigBinary mod) {
+    BigBinary resultat = createBigBinaryFromString("1"); // Resultat initial à 1
+    BigBinary b = moduloBigBinary(base, mod);            // Base modulo mod
+    BigBinary e = copierBigBinary(exp);
+
+    // Algorithme d'exponentiation binaire (Square and Multiply)
+    // On parcourt les bits de l'exposant du LSB vers le MSB (en utilisant divisePar2)
+
+    while (e.Signe != 0) { // Tant que exposant > 0
+        // Si l'exposant est impair (bit LSB à 1)
+        if (!estPair(e)) {
+            // resultat = (resultat * b) % mod
+            BigBinary mult = multiplicationEgyptienne(resultat, b);
+            freeBigBinary(&resultat);
+            resultat = moduloBigBinary(mult, mod);
+            freeBigBinary(&mult);
+        }
+
+        // b = (b * b) % mod
+        BigBinary carre = multiplicationEgyptienne(b, b);
+        freeBigBinary(&b);
+        b = moduloBigBinary(carre, mod);
+        freeBigBinary(&carre);
+
+        // e = e / 2
+        divisePar2(&e);
+    }
+
+    freeBigBinary(&b);
+    freeBigBinary(&e);
+    return resultat;
+}
+
 // Crée une copie d'un BigBinary
 BigBinary copierBigBinary(BigBinary source) {
     BigBinary copie;
