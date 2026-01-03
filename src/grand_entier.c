@@ -353,7 +353,7 @@ BigBinary copierBigBinary(BigBinary source) {
 
     return copie;
 }
-
+//Multiplication Egyptienne
 BigBinary multiplicationEgyptienne(BigBinary a, BigBinary b) {
     // 1. Initialiser le résultat à 0
     BigBinary resultat = createZero();
