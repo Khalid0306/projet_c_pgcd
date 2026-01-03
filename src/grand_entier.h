@@ -27,6 +27,9 @@ BigBinary sumBigBinary(BigBinary a, BigBinary b);
 BigBinary subBigBinary(BigBinary a, BigBinary b);
 BigBinary copierBigBinary(BigBinary source);
 BigBinary pgcdBigBinary(BigBinary a, BigBinary b);
+// AJOUT DE LA SIGNATURE MANQUANTE ICI :
+BigBinary multiplicationEgyptienne(BigBinary a, BigBinary b);
+
 void displayBigBinary(BigBinary nb);
 void freeBigBinary(BigBinary *nb);
 void ajusterTaille(BigBinary *nb);
