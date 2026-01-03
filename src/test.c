@@ -4,6 +4,10 @@
 
 #include <stdio.h>
 #include "grand_entier.h"
+//#ifdef _WIN32
+//#include <windows.h>
+//#endif
+
 
 void printTestHeader(const char *testName) {
     printf("\n================================================\n");
@@ -16,6 +20,12 @@ void printSubTestHeader(const char *subTestName) {
 }
 
 int main() {
+    // --- AJOUT POUR WINDOWS ENCODAGE ---
+    //#ifdef _WIN32
+    //SetConsoleOutputCP(65001); // Force la console en mode UTF-8
+    //#endif
+    // --------------------------
+
     printf("\n████████████████████████████████████████████████\n");
     printf("█  Début du test █\n");
     printf("████████████████████████████████████████████████\n");
@@ -166,6 +176,49 @@ int main() {
     BigBinary pgcd_simple = pgcdBigBinary(test_a, test_b);
     displayBigBinary(pgcd_simple);  // Devrait afficher 11 (3 en binaire)
 
+    // ==========================================================
+    // NOUVEAU TEST : MULTIPLICATION EGYPTIENNE (Placé avant la fin)
+    // ==========================================================
+    printTestHeader("TEST 7 : MULTIPLICATION EGYPTIENNE");
+
+    // Cas 1 : Multiplication simple (Exemple : 5 * 3 = 15)
+    printSubTestHeader("Test simple : 5 * 3");
+    BigBinary mul_a = createBigBinaryFromString("101");
+    BigBinary mul_b = createBigBinaryFromString("11");
+
+    printf("A (5) = "); displayBigBinary(mul_a);
+    printf("B (3) = "); displayBigBinary(mul_b);
+
+    BigBinary res_mul_simple = multiplicationEgyptienne(mul_a, mul_b);
+    printf("A * B = "); displayBigBinary(res_mul_simple);
+    // Vérification visuelle : doit afficher 1111
+
+    // Cas 2 : Multiplication par 0
+    printSubTestHeader("Test par Zero : A1 * 0");
+    BigBinary zero = createZero();
+    BigBinary res_mul_zero = multiplicationEgyptienne(A1, zero);
+    printf("Résultat attendu : 0\n");
+    printf("Résultat obtenu  : "); displayBigBinary(res_mul_zero);
+
+    // Cas 3 : Multiplication par 1 (Identité)
+    printSubTestHeader("Test Identité : B1 * 1");
+    BigBinary un = createBigBinaryFromString("1");
+    BigBinary res_mul_un = multiplicationEgyptienne(B1, un);
+
+    printf("Est-ce que (B1 * 1) == B1 ? %s\n",
+           comparaisonEgal(res_mul_un, B1) ? "OUI" : "NON");
+
+    // Cas 4 : Grands Nombres (A2 * B2)
+    printSubTestHeader("Grands Nombres : A2 * B2");
+    printf("Calcul en cours...\n");
+    BigBinary res_mul_grand = multiplicationEgyptienne(A2, B2);
+    printf("Taille du résultat : %d bits\n", res_mul_grand.Taille);
+    printf("Résultat (début) : ");
+    displayBigBinary(res_mul_grand);
+
+    // ==========================================================
+    // LIBÉRATION MÉMOIRE (Tout libérer à la fin)
+    // ==========================================================
     printTestHeader("LIBÉRATION MÉMOIRE");
 
     freeBigBinary(&A1);
@@ -188,6 +241,16 @@ int main() {
     freeBigBinary(&test_a);
     freeBigBinary(&test_b);
     freeBigBinary(&pgcd_simple);
+
+    // Libération des variables du test multiplication
+    freeBigBinary(&mul_a);
+    freeBigBinary(&mul_b);
+    freeBigBinary(&res_mul_simple);
+    freeBigBinary(&zero);
+    freeBigBinary(&res_mul_zero);
+    freeBigBinary(&un);
+    freeBigBinary(&res_mul_un);
+    freeBigBinary(&res_mul_grand);
 
     printf("Mémoire libérée\n");
 

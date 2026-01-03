@@ -353,6 +353,37 @@ BigBinary copierBigBinary(BigBinary source) {
 
     return copie;
 }
+//Multiplication Egyptienne
+BigBinary multiplicationEgyptienne(BigBinary a, BigBinary b) {
+    // 1. Initialiser le résultat à 0
+    BigBinary resultat = createZero();
+
+    // 2. Faire des copies pour ne pas modifier les originaux
+    BigBinary A = copierBigBinary(a);
+    BigBinary B = copierBigBinary(b);
+
+    // 3. Boucle tant que B > 0
+    while (B.Signe != 0) {
+        // Si B est impair (LSB == 1), on ajoute A au résultat
+        if (!estPair(B)) {
+            BigBinary temp = sumBigBinary(resultat, A);
+            freeBigBinary(&resultat); // Libérer l'ancienne mémoire
+            resultat = temp;
+        }
+
+        // A = A * 2
+        multiplierPar2(&A);
+
+        // B = B / 2
+        divisePar2(&B);
+    }
+
+    // Nettoyage des copies
+    freeBigBinary(&A);
+    freeBigBinary(&B);
+
+    return resultat;
+}
 
 // Algorithme binaire d'Euclide pour le PGCD
 BigBinary pgcdBigBinary(BigBinary a, BigBinary b) {
