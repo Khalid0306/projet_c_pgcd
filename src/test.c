@@ -166,6 +166,16 @@ int main() {
     BigBinary pgcd_simple = pgcdBigBinary(test_a, test_b);
     displayBigBinary(pgcd_simple);  // Devrait afficher 11 (3 en binaire)
 
+    printSubTestHeader("Modulo A % N");
+    BigBinary A = createBigBinaryFromString("10101"); // 21
+    BigBinary N = createBigBinaryFromString("110");   // 6
+    BigBinary R = moduloBigBinary(A, N);
+    printf("21 %% 6 = ");
+    displayBigBinary(R); // attendu: 11
+    freeBigBinary(&A);
+    freeBigBinary(&N);
+    freeBigBinary(&R);
+
     printTestHeader("LIBÉRATION MÉMOIRE");
 
     freeBigBinary(&A1);
