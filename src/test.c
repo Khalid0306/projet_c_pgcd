@@ -169,10 +169,10 @@ int main() {
     printf("\nPGCD(A, B) = ");
     displayBigBinary(pgcd_result);
 
-    printSubTestHeader("Test simple : PGCD(51, 57) = 3");
-    BigBinary test_a = createBigBinaryFromString("110011");  // 51
-    BigBinary test_b = createBigBinaryFromString("111001");  // 57
-    printf("PGCD(51, 57) = ");
+    printSubTestHeader("Test simple : PGCD(3, 6)");
+    BigBinary test_a = createBigBinaryFromString("11");  // 51
+    BigBinary test_b = createBigBinaryFromString("110S");
+    printf("PGCD(3, 6) = ");
     BigBinary pgcd_simple = pgcdBigBinary(test_a, test_b);
     displayBigBinary(pgcd_simple);  // Devrait afficher 11 (3 en binaire)
 

@@ -544,58 +544,6 @@ BigBinary multiplicationEgyptienne(BigBinary a, BigBinary b) {
     return resultat;
 }
 
-// Modulo calcule A % N pour des BigBinary (binaire)
-BigBinary moduloBigBinary(BigBinary a, BigBinary n) {
-    // modulo par 0 n'existe pas
-    if (n.Signe == 0) {
-        fprintf(stderr, "Erreur: Modulo par zero interdit.\n");
-        return createZero();
-    }
-    // si a =0 alors 0 % n =0
-    if (a.Signe == 0) return createZero();
-
-    // On travaille avec des valeurs positives pour le calcul
-    // Pour le modulo, le signe n'est pas utile, reste soit positif.
-    BigBinary R = copierBigBinary(a); // R = "reste" courant
-    R.Signe = 1;
-    BigBinary N = copierBigBinary(n); // n = diviseur
-    N.Signe = 1;
-
-    // Tant que R >= N, on peut encore retirer des "paquets" de N.
-    // Objectif : arriver à un reste R < N.
-    while (!comparaisonInferieur(R, N)) {
-
-        // On cherche le plus grand k tel que 2^k * N qui reste <= R.
-        // On approxime k par la différence de taille en bits.
-        int diffTaille = R.Taille - N.Taille;
-        if (diffTaille < 0) diffTaille = 0;
-
-        // Créer N_shift = N << diffTaille  (donc N * 2^diffTaille)
-        BigBinary N_shift = copierBigBinary(N);
-        for (int i = 0; i < diffTaille; i++) {
-            multiplierPar2(&N_shift); // décalage à gauche : *2
-        }
-
-        // Si on a décalé trop loin (N_shift > R), on revient d'un cran
-        // N_shift = N_shift / 2
-        if (comparaisonInferieur(R, N_shift)) {
-            divisePar2(&N_shift);
-        }
-
-        // On sait que R >= N_shift donc la soustraction est autorisée
-        BigBinary temp = subBigBinary(R, N_shift);
-        freeBigBinary(&R); // On libère l'ancien R remplacé
-        R = temp;
-
-        // N_shift est temporaire donc on libère
-        freeBigBinary(&N_shift);
-    }
-
-    freeBigBinary(&N); // Plus besoin de la copie N
-
-    return R; // R < N ce qui équivaut au reste A % N
-}
-
 // Algorithme binaire d'Euclide pour le PGCD
 BigBinary pgcdBigBinary(BigBinary a, BigBinary b) {
     // Si PGCD(a, 0) = a
