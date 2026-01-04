@@ -177,6 +177,22 @@ int main() {
     displayBigBinary(pgcd_simple);  // Devrait afficher 11 (3 en binaire)
 
     // ==========================================================
+    // TEST MODULO A % N
+    // ==========================================================
+    printTestHeader("Modulo A % N");
+    BigBinary A = createBigBinaryFromString("10101"); // 21
+    BigBinary N = createBigBinaryFromString("110");   // 6
+
+    BigBinary R_mod = moduloBigBinary(A, N);
+
+    printf("21 %% 6 = ");
+    displayBigBinary(R_mod); // attendu: 11
+
+    freeBigBinary(&A);
+    freeBigBinary(&N);
+    freeBigBinary(&R_mod);
+
+    // ==========================================================
     // NOUVEAU TEST : MULTIPLICATION EGYPTIENNE (Placé avant la fin)
     // ==========================================================
     printTestHeader("TEST 7 : MULTIPLICATION EGYPTIENNE");
