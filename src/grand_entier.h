@@ -31,7 +31,9 @@ BigBinary sumBigBinary(BigBinary a, BigBinary b);
 BigBinary subBigBinary(BigBinary a, BigBinary b);
 BigBinary copierBigBinary(BigBinary source);
 BigBinary pgcdBigBinary(BigBinary a, BigBinary b);
+BigBinary multiplicationEgyptienne(BigBinary a, BigBinary b);
 BigBinary moduloBigBinary(BigBinary a, BigBinary n);
+BigBinary exponentiationModulaire(BigBinary base, BigBinary exp, BigBinary mod);
 void displayBigBinary(BigBinary nb);
 void freeBigBinary(BigBinary *nb);
 void ajusterTaille(BigBinary *nb);
@@ -42,8 +44,5 @@ bool comparaisonInferieur(BigBinary a, BigBinary b);
 bool estPair(BigBinary nb);
 char* bigBinaryToDecimal(const BigBinary nb);
 
-
-// PHASE 2
-BigBinary moduloBigBinary(BigBinary a, BigBinary n);
 
 #endif //PROJET_C_PGCD_GRAND_ENTIER_H
