@@ -335,37 +335,101 @@ void multiplierPar2(BigBinary *nb) {
     nb->Taille++;
 }
 
-// Exponentiation Modulaire : (base ^ exp) % mod
+// Modulo : A % N
+BigBinary moduloBigBinary(BigBinary a, BigBinary n) {
+    // Sécurité
+    if (n.Signe == 0) {
+        fprintf(stderr, "Erreur: Modulo par zero interdit.\n");
+        return createZero();
+    }
+    if (a.Signe == 0) return createZero();
+
+    // On travaille avec des valeurs positives pour le calcul
+    BigBinary R = copierBigBinary(a);
+    R.Signe = 1;
+    BigBinary N = copierBigBinary(n);
+    N.Signe = 1;
+
+    // Tant que R >= N
+    while (!comparaisonInferieur(R, N)) {
+        // Optimisation : Trouver le plus grand k tel que (2^k * N) <= R
+        // On approxime k par la différence de taille en bits
+        int diffTaille = R.Taille - N.Taille;
+        if (diffTaille < 0) diffTaille = 0;
+
+        // Créer une version décalée de N : N_shift = N * 2^diffTaille
+        BigBinary N_shift = copierBigBinary(N);
+        for (int i = 0; i < diffTaille; i++) {
+            multiplierPar2(&N_shift);
+        }
+
+        // Si on a décalé trop loin (N_shift > R), on revient un cran en arrière
+        if (comparaisonInferieur(R, N_shift)) {
+            divisePar2(&N_shift);
+        }
+
+        // R = R - N_shift
+        // Note : Votre fonction subBigBinary demande A >= B, ce qui est garanti ici
+        BigBinary temp = subBigBinary(R, N_shift);
+        freeBigBinary(&R);
+        R = temp;
+
+        freeBigBinary(&N_shift);
+    }
+
+    freeBigBinary(&N);
+    return R;
+}
+
+// Exponentiation Modulaire : calcule (base ^ exp) % mod pour des BigBinary
 BigBinary exponentiationModulaire(BigBinary base, BigBinary exp, BigBinary mod) {
-    BigBinary resultat = createBigBinaryFromString("1"); // Resultat initial à 1
-    BigBinary b = moduloBigBinary(base, mod);            // Base modulo mod
+
+    // Début, le résultat vaut 1 (élément neutre de la multiplication).
+    BigBinary resultat = createBigBinaryFromString("1");
+
+    // On réduit la base modulo mod dès le début pour éviter des nombres trop grands.
+    BigBinary b = moduloBigBinary(base, mod);
+
+    // copie l'exposant pour pouvoir le modifier sans toucher à l'initial.
     BigBinary e = copierBigBinary(exp);
 
     // Algorithme d'exponentiation binaire (Square and Multiply)
     // On parcourt les bits de l'exposant du LSB vers le MSB (en utilisant divisePar2)
 
-    while (e.Signe != 0) { // Tant que exposant > 0
-        // Si l'exposant est impair (bit LSB à 1)
+    while (e.Signe != 0) { // Tant que e > 0
+
+        // Si le bit de poids faible de e vaut 1, on doit multiplier le résultat
         if (!estPair(e)) {
-            // resultat = (resultat * b) % mod
+
+            // resultat = resultat * b
             BigBinary mult = multiplicationEgyptienne(resultat, b);
+
+            // On libère l'ancien résultat avant de le remplacer
             freeBigBinary(&resultat);
+
+            //On applique le modulo immédiatement pour rester dans des tailles raisonnables
             resultat = moduloBigBinary(mult, mod);
+
+            // mult est temporaire, on peut le libérer
             freeBigBinary(&mult);
         }
 
-        // b = (b * b) % mod
+        // b = (b * b) (mise au carré de la base)
         BigBinary carre = multiplicationEgyptienne(b, b);
         freeBigBinary(&b);
+
+        // On réduit encore modulo mod pour éviter que b devienne trop grand
         b = moduloBigBinary(carre, mod);
         freeBigBinary(&carre);
 
-        // e = e / 2
+        // On divise l'exposant par 2 (décalage à droite en binaire)
         divisePar2(&e);
     }
-
+    // Libération des variables temporaires
     freeBigBinary(&b);
     freeBigBinary(&e);
+
+    // À la fin, resultat contient (base^exp) % mod
     return resultat;
 }
 

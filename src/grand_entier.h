@@ -29,6 +29,7 @@ BigBinary copierBigBinary(BigBinary source);
 BigBinary pgcdBigBinary(BigBinary a, BigBinary b);
 BigBinary multiplicationEgyptienne(BigBinary a, BigBinary b);
 BigBinary moduloBigBinary(BigBinary a, BigBinary n);
+BigBinary exponentiationModulaire(BigBinary base, BigBinary exp, BigBinary mod);
 void displayBigBinary(BigBinary nb);
 void freeBigBinary(BigBinary *nb);
 void ajusterTaille(BigBinary *nb);

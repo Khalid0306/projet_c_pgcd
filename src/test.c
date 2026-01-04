@@ -217,6 +217,25 @@ int main() {
     displayBigBinary(res_mul_grand);
 
     // ==========================================================
+    // TEST EXPONENTIATION MODULAIRE
+    // ==========================================================
+    printSubTestHeader("Exponentiation modulaire");
+
+    BigBinary base = createBigBinaryFromString("10");   // 2
+    BigBinary exp  = createBigBinaryFromString("101");  // 5
+    BigBinary mod  = createBigBinaryFromString("1101"); // 13
+
+    BigBinary R = exponentiationModulaire(base, exp, mod);
+
+    printf("2^5 mod 13 = ");
+    displayBigBinary(R); // attendu: 110
+
+    freeBigBinary(&base);
+    freeBigBinary(&exp);
+    freeBigBinary(&mod);
+    freeBigBinary(&R);
+
+    // ==========================================================
     // LIBÉRATION MÉMOIRE (Tout libérer à la fin)
     // ==========================================================
     printTestHeader("LIBÉRATION MÉMOIRE");
