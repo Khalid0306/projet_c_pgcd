@@ -177,6 +177,22 @@ int main() {
     displayBigBinary(pgcd_simple);  // Devrait afficher 11 (3 en binaire)
 
     // ==========================================================
+    // TEST MODULO A % N
+    // ==========================================================
+    printTestHeader("Modulo A % N");
+    BigBinary A = createBigBinaryFromString("10101"); // 21
+    BigBinary N = createBigBinaryFromString("110");   // 6
+
+    BigBinary R_mod = moduloBigBinary(A, N);
+
+    printf("21 %% 6 = ");
+    displayBigBinary(R_mod); // attendu: 11
+
+    freeBigBinary(&A);
+    freeBigBinary(&N);
+    freeBigBinary(&R_mod);
+
+    // ==========================================================
     // NOUVEAU TEST : MULTIPLICATION EGYPTIENNE (Placé avant la fin)
     // ==========================================================
     printTestHeader("TEST 7 : MULTIPLICATION EGYPTIENNE");
@@ -215,6 +231,25 @@ int main() {
     printf("Taille du résultat : %d bits\n", res_mul_grand.Taille);
     printf("Résultat (début) : ");
     displayBigBinary(res_mul_grand);
+
+    // ==========================================================
+    // TEST EXPONENTIATION MODULAIRE
+    // ==========================================================
+    printSubTestHeader("Exponentiation modulaire");
+
+    BigBinary base = createBigBinaryFromString("10");   // 2
+    BigBinary exp  = createBigBinaryFromString("101");  // 5
+    BigBinary mod  = createBigBinaryFromString("1101"); // 13
+
+    BigBinary R = exponentiationModulaire(base, exp, mod);
+
+    printf("2^5 mod 13 = ");
+    displayBigBinary(R); // attendu: 110
+
+    freeBigBinary(&base);
+    freeBigBinary(&exp);
+    freeBigBinary(&mod);
+    freeBigBinary(&R);
 
     // ==========================================================
     // LIBÉRATION MÉMOIRE (Tout libérer à la fin)
