@@ -17,6 +17,10 @@ BigBinary createBigBinary(int size) {
     binary.Signe = 0;
     binary.Taille = size;
     binary.Tdigits = malloc(size * sizeof(int));
+    if (binary.Tdigits == NULL) {
+        fprintf(stderr, "Erreur critique : allocation mémoire échouée\n");
+        exit(EXIT_FAILURE);
+    }
     return binary;
 }
 
@@ -225,13 +229,14 @@ void ajusterTaille(BigBinary *nb)
     }
 
     // Décaler le tableau si nécessaire
-    if (nouveauDebut > 0)
-    {
+    if (nouveauDebut > 0) {
         int nouvelleTaille = nb->Taille - nouveauDebut;
-        for (int i = 0; i < nouvelleTaille; i++)
-        {
-            nb->Tdigits[i] = nb->Tdigits[nouveauDebut + i];
+        int *nouveauTableau = malloc(nouvelleTaille * sizeof(int));
+        for (int i = 0; i < nouvelleTaille; i++) {
+            nouveauTableau[i] = nb->Tdigits[nouveauDebut + i];
         }
+        free(nb->Tdigits);
+        nb->Tdigits = nouveauTableau;
         nb->Taille = nouvelleTaille;
     }
 }
@@ -334,9 +339,11 @@ BigBinary subBigBinary(BigBinary a, BigBinary b) {
 
 void divisePar2(BigBinary *nb) {
     // Cas zéro ou nombre à 1 bit
-    if (nb->Signe == 0 || nb->Taille <= 1) {
+    if (nb->Signe == 0) {
+        return; // Déjà zéro
+    }
+    if (nb->Taille == 1 && nb->Tdigits[0] == 1) {
         nb->Tdigits[0] = 0;
-        nb->Taille = 1;
         nb->Signe = 0;
         return;
     }
@@ -390,56 +397,52 @@ void multiplierPar2(BigBinary *nb) {
     nb->Taille++;
 }
 
-// Modulo calcule A % N pour des BigBinary (binaire)
 BigBinary moduloBigBinary(BigBinary a, BigBinary n) {
-    // modulo par 0 n'existe pas
+
     if (n.Signe == 0) {
         fprintf(stderr, "Erreur: Modulo par zero interdit.\n");
         return createZero();
     }
-    // si a =0 alors 0 % n =0
     if (a.Signe == 0) return createZero();
 
-    // On travaille avec des valeurs positives pour le calcul
-    // Pour le modulo, le signe n'est pas utile, reste soit positif.
-    BigBinary R = copierBigBinary(a); // R = "reste" courant
+    // Copies pour travailler
+    BigBinary R = copierBigBinary(a);
     R.Signe = 1;
-    BigBinary N = copierBigBinary(n); // n = diviseur
+    BigBinary N = copierBigBinary(n);
     N.Signe = 1;
 
-    // Tant que R >= N, on peut encore retirer des "paquets" de N.
-    // Objectif : arriver à un reste R < N.
+    // Algorithme de soustraction par décalage
     while (!comparaisonInferieur(R, N)) {
-
-        // On cherche le plus grand k tel que 2^k * N qui reste <= R.
-        // On approxime k par la différence de taille en bits.
         int diffTaille = R.Taille - N.Taille;
-        if (diffTaille < 0) diffTaille = 0;
 
-        // Créer N_shift = N << diffTaille  (donc N * 2^diffTaille)
-        BigBinary N_shift = copierBigBinary(N);
-        for (int i = 0; i < diffTaille; i++) {
-            multiplierPar2(&N_shift); // décalage à gauche : *2
+        if (diffTaille < 0) {
+            break; // R < N déjà garanti
         }
 
-        // Si on a décalé trop loin (N_shift > R), on revient d'un cran
-        // N_shift = N_shift / 2
-        if (comparaisonInferieur(R, N_shift)) {
+        // Créer N_shift = N << diffTaille
+        BigBinary N_shift = copierBigBinary(N);
+        for (int i = 0; i < diffTaille; i++) {
+            multiplierPar2(&N_shift);
+        }
+
+        while (comparaisonInferieur(R, N_shift) && N_shift.Taille > N.Taille) {
             divisePar2(&N_shift);
         }
 
-        // On sait que R >= N_shift donc la soustraction est autorisée
-        BigBinary temp = subBigBinary(R, N_shift);
-        freeBigBinary(&R); // On libère l'ancien R remplacé
-        R = temp;
+        if (comparaisonInferieur(R, N_shift)) {
+            freeBigBinary(&N_shift);
+            break; // R < N_shift, donc R < N
+        }
 
-        // N_shift est temporaire donc on libère
+        // Soustraction
+        BigBinary temp = subBigBinary(R, N_shift);
+        freeBigBinary(&R);
+        R = temp;
         freeBigBinary(&N_shift);
     }
 
-    freeBigBinary(&N); // Plus besoin de la copie N
-
-    return R; // R < N ce qui équivaut au reste A % N
+    freeBigBinary(&N);
+    return R;
 }
 
 // Exponentiation Modulaire : calcule (base ^ exp) % mod pour des BigBinary
