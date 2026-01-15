@@ -71,7 +71,7 @@ BigBinary initBigBinary(int taille, int signe) {
     }
     return nb;
 }
-
+/*
 // Convertit un BigBinary en chaîne de caractères décimale
 char* bigBinaryToDecimal(const BigBinary nb) {
     // Cas du zéro ou vide
@@ -121,6 +121,7 @@ char* bigBinaryToDecimal(const BigBinary nb) {
 
     return buffer;
 }
+*/
 
 void displayBigBinary(BigBinary nb) {
     // 1. Affichage du signe
@@ -140,22 +141,22 @@ void displayBigBinary(BigBinary nb) {
     }
 
     if (estNul || nb.Signe == 0) {
-        printf("Binaire: 0 | Decimal: 0\n");
+        printf("Binaire: 0 \n");
         return;
     }
 
     // 3. Affichage Binaire
-    printf("Binaire: ");
+    printf("\n Binaire: ");
     for (int i = 0; i < nb.Taille; ++i) {
         printf("%d", nb.Tdigits[i]);
     }
 
-    // 4. Conversion et Affichage Décimal
-    char* decimalStr = bigBinaryToDecimal(nb);
-    printf(" | Decimal: %s%s\n", (nb.Signe == -1 ? "-" : ""), decimalStr);
-
-    // Important : Libérer la mémoire de la chaîne générée
-    free(decimalStr);
+    // // 4. Conversion et Affichage Décimal
+    // char* decimalStr = bigBinaryToDecimal(nb);
+    // printf(" | Decimal: %s%s\n", (nb.Signe == -1 ? "-" : ""), decimalStr);
+    //
+    // // Important : Libérer la mémoire de la chaîne générée
+    // free(decimalStr);
 }
 
 // Libération de la mémoire
@@ -549,51 +550,20 @@ BigBinary multiplicationEgyptienne(BigBinary a, BigBinary b) {
 
 // Algorithme binaire d'Euclide pour le PGCD
 BigBinary pgcdBigBinary(BigBinary a, BigBinary b) {
-    // Si PGCD(a, 0) = a
-    if (b.Signe == 0) {
-        return copierBigBinary(a);
-    }
+    if (b.Signe == 0) return copierBigBinary(a);
+    if (a.Signe == 0) return copierBigBinary(b);
 
-    // Si PGCD(b, 0) = b
-    if (a.Signe == 0) {
-        return copierBigBinary(b);
-    }
-
-    // Créer des copies
     BigBinary aCopy = copierBigBinary(a);
     BigBinary bCopy = copierBigBinary(b);
+    int k = 0;
 
-    // Compteur pour le facteur 2^k
-    int facteur2 = 0;
-
-    // Si a et b sont tous deux pairs, factoriser par 2
-    while (estPair(aCopy) && estPair(bCopy)) {
-        divisePar2(&aCopy);
-        divisePar2(&bCopy);
-        facteur2++;
-    }
+    while (estPair(aCopy) && estPair(bCopy)) { divisePar2(&aCopy); divisePar2(&bCopy); k++; }
 
     while (aCopy.Signe != 0 && bCopy.Signe != 0) {
-        // Si a est pair et b impair
-        while (estPair(aCopy) && !estPair(bCopy)) {
-            divisePar2(&aCopy);
-        }
-
-        // Si a est impair et b pair
-        while (!estPair(aCopy) && estPair(bCopy)) {
-            divisePar2(&bCopy);
-        }
-
-        // Si a et b sont impairs
+        while (estPair(aCopy) && !estPair(bCopy)) divisePar2(&aCopy);
+        while (!estPair(aCopy) && estPair(bCopy)) divisePar2(&bCopy);
         if (!estPair(aCopy) && !estPair(bCopy)) {
-            // S'assurer que a >= b
-            if (comparaisonInferieur(aCopy, bCopy)) {
-                BigBinary temp = aCopy;
-                aCopy = bCopy;
-                bCopy = temp;
-            }
-
-            // a = a - b
+            if (comparaisonInferieur(aCopy, bCopy)) { BigBinary temp = aCopy; aCopy = bCopy; bCopy = temp; }
             BigBinary diff = subBigBinary(aCopy, bCopy);
             freeBigBinary(&aCopy);
             aCopy = diff;
@@ -601,18 +571,19 @@ BigBinary pgcdBigBinary(BigBinary a, BigBinary b) {
     }
 
     BigBinary resultat;
-    if (bCopy.Signe == 0) {
-        resultat = aCopy;
-        freeBigBinary(&bCopy);
-    } else {
-        resultat = bCopy;
-        freeBigBinary(&aCopy);
-    }
+    if (bCopy.Signe == 0) { resultat = aCopy; freeBigBinary(&bCopy); }
+    else { resultat = bCopy; freeBigBinary(&aCopy); }
 
-    // Multiplier par 2^facteur2
-    for (int i = 0; i < facteur2; i++) {
-        multiplierPar2(&resultat);
-    }
-
+    for (int i = 0; i < k; i++) multiplierPar2(&resultat);
     return resultat;
+}
+
+long long bigBinaryToLongLong(BigBinary nb) {
+    if (nb.Signe == 0 || nb.Taille == 0) return 0;
+    unsigned long long val = 0;
+    int start = (nb.Taille > 63) ? nb.Taille - 63 : 0; // on lit au plus 63 bits
+    for (int i = start; i < nb.Taille; i++) {
+        val = (val << 1) | (unsigned long long)(nb.Tdigits[i] & 1);
+    }
+    return (long long)val;
 }
