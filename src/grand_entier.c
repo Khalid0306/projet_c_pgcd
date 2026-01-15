@@ -71,57 +71,6 @@ BigBinary initBigBinary(int taille, int signe) {
     }
     return nb;
 }
-/*
-// Convertit un BigBinary en chaîne de caractères décimale
-char* bigBinaryToDecimal(const BigBinary nb) {
-    // Cas du zéro ou vide
-    if (nb.Taille == 0 || (nb.Taille == 1 && nb.Tdigits[0] == 0) || nb.Signe == 0) {
-        char *res = malloc(2 * sizeof(char));
-        res[0] = '0';
-        res[1] = '\0';
-        return res;
-    }
-
-    // Allocation d'un buffer pour la chaîne décimale.
-    // Taille max approx : nombre de bits + 2 (pour sécurité et signe)
-    int cap = nb.Taille + 2;
-    char *buffer = malloc(cap * sizeof(char));
-
-    // On initialise la chaîne à "0"
-    // Note : On stocke les chiffres à l'envers (Unités à l'index 0) pour faciliter le calcul
-    int len = 1;
-    buffer[0] = '0';
-
-    // Algorithme "Double Dabble" simplifié : pour chaque bit, on double le nombre décimal actuel et on ajoute le bit.
-    for (int i = 0; i < nb.Taille; ++i) {
-        int bit = nb.Tdigits[i]; // On lit du MSB (poids fort) vers le LSB
-        int carry = bit;         // On ajoute le bit courant après le décalage (x2)
-
-        // On parcourt la chaîne décimale actuelle pour la multiplier par 2
-        for (int j = 0; j < len; j++) {
-            int val = (buffer[j] - '0') * 2 + carry;
-            buffer[j] = (val % 10) + '0';
-            carry = val / 10;
-        }
-        // Si une retenue reste à la fin, on agrandit le nombre
-        while (carry > 0) {
-            buffer[len] = (carry % 10) + '0';
-            carry /= 10;
-            len++;
-        }
-    }
-    buffer[len] = '\0';
-
-    // On inverse la chaîne pour l'avoir dans le bon ordre (MSB à gauche)
-    for (int i = 0; i < len / 2; i++) {
-        char temp = buffer[i];
-        buffer[i] = buffer[len - 1 - i];
-        buffer[len - 1 - i] = temp;
-    }
-
-    return buffer;
-}
-*/
 
 void displayBigBinary(BigBinary nb) {
     // 1. Affichage du signe
@@ -339,34 +288,18 @@ BigBinary subBigBinary(BigBinary a, BigBinary b) {
 }
 
 void divisePar2(BigBinary *nb) {
-    // Cas zéro ou nombre à 1 bit
-    if (nb->Signe == 0) {
-        return; // Déjà zéro
-    }
-    if (nb->Taille == 1 && nb->Tdigits[0] == 1) {
+    // Si le nombre est 0 ou invalide, on ne fait rien
+    if (nb->Signe == 0 || nb->Taille == 0) return;
+
+    // Si on a 1 seul bit, le diviser par 2 donne 0
+    if (nb->Taille == 1) {
         nb->Tdigits[0] = 0;
         nb->Signe = 0;
         return;
     }
 
-    // Enlever le bit de poids faible = dernier élément
+    // Le LSB est ignoré.
     nb->Taille--;
-
-    // Réallouer pour libérer la mémoire
-    int *nouveauTableau = malloc(nb->Taille * sizeof(int));
-    for (int i = 0; i < nb->Taille; i++) {
-        nouveauTableau[i] = nb->Tdigits[i];
-    }
-    free(nb->Tdigits);
-    nb->Tdigits = nouveauTableau;
-
-    // Si le résultat est vide, mettre à 0
-    if (nb->Taille == 0) {
-        nb->Tdigits = malloc(sizeof(int));
-        nb->Tdigits[0] = 0;
-        nb->Taille = 1;
-        nb->Signe = 0;
-    }
 }
 
 bool estPair(BigBinary nb) {
